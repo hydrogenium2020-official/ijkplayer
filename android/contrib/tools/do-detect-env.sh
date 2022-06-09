@@ -60,7 +60,7 @@ case "$IJK_NDK_REL" in
                 ;;
             esac
         else
-            echo "你需要使用NDK19或者更新的版本"
+            echo "你需要使用Android NDK21"
             exit 1
         fi
     ;;
@@ -73,12 +73,12 @@ case "$IJK_NDK_REL" in
                 then
                     echo "NDKr$IJK_NDK_REL detected"
                 else
-                    echo "你需要使用NDK19或者更新的版本"
+                    echo "你需要使用Android NDK21"
                     exit 1
                 fi
             ;;
             *)
-                echo "你需要使用NDK19或者更新的版本"
+                echo "你需要使用Android NDK21"
                 exit 1
             ;;
         esac
@@ -90,6 +90,9 @@ esac
 case "$UNAME_S" in
     Darwin)
         export IJK_MAKE_FLAG=-j`sysctl -n machdep.cpu.thread_count`
+    ;;
+    Linux)
+        export IJK_MAKE_FLAG=-j`nproc`
     ;;
     CYGWIN_NT-*)
         IJK_WIN_TEMP="$(cygpath -am /tmp)"

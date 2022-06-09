@@ -59,7 +59,7 @@ TARGET_EXTRA_LDFLAGS=
 TARGET_DEP_LIBS=
 TARGET_CLANG_PREFIX=
 
-TARGET_MODULE_DIRS="compat libavcodec libavfilter libavformat libavutil libswresample libswscale"
+TARGET_MODULE_DIRS="compat libavdevice libavcodec libavfilter  libavformat libavutil libswresample libswscale"
 TARGET_ASSEMBLER_SUB_DIRS=
 
 

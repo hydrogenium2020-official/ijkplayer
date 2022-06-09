@@ -17,9 +17,9 @@
 #
 
 
-IJK_SOUNDTOUCH_UPSTREAM=https://codeberg.org/soundtouch/soundtouch.git
-IJK_SOUNDTOUCH_FORK=https://codeberg.org/soundtouch/soundtouch.git
-IJK_SOUNDTOUCH_COMMIT=2.3.1
+IJK_SOUNDTOUCH_UPSTREAM=https://github.com/Bilibili/soundtouch.git
+IJK_SOUNDTOUCH_FORK=https://github.com/Bilibili/soundtouch.git
+IJK_SOUNDTOUCH_COMMIT=ijk-r0.1.2-dev
 IJK_SOUNDTOUCH_LOCAL_REPO=extra/soundtouch
 
 set -e
