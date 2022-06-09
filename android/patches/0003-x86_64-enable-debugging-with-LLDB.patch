@@ -18,26 +18,21 @@ index 9afe650..9f169ad 100644
 @@ -44,14 +44,14 @@ dependencies {
      compile project(':ijkplayer-java')
      compile project(':ijkplayer-exo')
- 
--    all32Compile project(':ijkplayer-armv5')
+
 -    all32Compile project(':ijkplayer-armv7a')
 -    all32Compile project(':ijkplayer-x86')
 -
--    all64Compile project(':ijkplayer-armv5')
 -    all64Compile project(':ijkplayer-armv7a')
 -    all64Compile project(':ijkplayer-arm64')
 -    all64Compile project(':ijkplayer-x86')
-+//    all32Compile project(':ijkplayer-armv5')
 +//    all32Compile project(':ijkplayer-armv7a')
 +//    all32Compile project(':ijkplayer-x86')
 +//
-+//    all64Compile project(':ijkplayer-armv5')
 +//    all64Compile project(':ijkplayer-armv7a')
 +//    all64Compile project(':ijkplayer-arm64')
 +//    all64Compile project(':ijkplayer-x86')
      all64Compile project(':ijkplayer-x86_64')
  
-     // armv5Compile project(':player-armv5')
 diff --git a/android/ijkplayer/ijkplayer-x86_64/build.gradle b/android/ijkplayer/ijkplayer-x86_64/build.gradle
 index a8cbe0c..b4a6673 100644
 --- a/android/ijkplayer/ijkplayer-x86_64/build.gradle
@@ -123,7 +118,7 @@ index 758234a..f1f857f 100644
 --- a/android/ijkplayer/settings.gradle
 +++ b/android/ijkplayer/settings.gradle
 @@ -1,7 +1,7 @@
--include ':ijkplayer-armv5', ':ijkplayer-x86_64'
+-include  ':ijkplayer-x86_64'
 -include ':ijkplayer-armv7a'
 -include ':ijkplayer-arm64'
 -include ':ijkplayer-x86'

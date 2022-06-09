@@ -63,10 +63,6 @@ index ba2db29..a126226 100644
  MY_APP_FFMPEG_OUTPUT_PATH := $(realpath $(MY_APP_ANDROID_ROOT)/contrib/build/ffmpeg-armv7a/output)
  MY_APP_FFMPEG_INCLUDE_PATH := $(realpath $(MY_APP_FFMPEG_OUTPUT_PATH)/include)
 -endif
--ifeq ($(TARGET_ARCH_ABI),armeabi)
--MY_APP_FFMPEG_OUTPUT_PATH := $(realpath $(MY_APP_ANDROID_ROOT)/contrib/build/ffmpeg-armv5/output)
--MY_APP_FFMPEG_INCLUDE_PATH := $(realpath $(MY_APP_FFMPEG_OUTPUT_PATH)/include)
--endif
 -ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 -MY_APP_FFMPEG_OUTPUT_PATH := $(realpath $(MY_APP_ANDROID_ROOT)/contrib/build/ffmpeg-arm64/output)
 -MY_APP_FFMPEG_INCLUDE_PATH := $(realpath $(MY_APP_FFMPEG_OUTPUT_PATH)/include)
@@ -88,16 +84,12 @@ index 9afe650..3d6df0f 100644
 @@ -44,15 +44,15 @@ dependencies {
      compile project(':ijkplayer-java')
      compile project(':ijkplayer-exo')
- 
--    all32Compile project(':ijkplayer-armv5')
-+//    all32Compile project(':ijkplayer-armv5')
+
      all32Compile project(':ijkplayer-armv7a')
 -    all32Compile project(':ijkplayer-x86')
 -
--    all64Compile project(':ijkplayer-armv5')
 +//    all32Compile project(':ijkplayer-x86')
 +//
-+//    all64Compile project(':ijkplayer-armv5')
      all64Compile project(':ijkplayer-armv7a')
 -    all64Compile project(':ijkplayer-arm64')
 -    all64Compile project(':ijkplayer-x86')
@@ -106,15 +98,14 @@ index 9afe650..3d6df0f 100644
 +//    all64Compile project(':ijkplayer-x86')
 +//    all64Compile project(':ijkplayer-x86_64')
  
-     // armv5Compile project(':player-armv5')
      // armv7aCompile project(':player-armv7a')
 diff --git a/android/ijkplayer/settings.gradle b/android/ijkplayer/settings.gradle
 index 758234a..b51e5d3 100644
 --- a/android/ijkplayer/settings.gradle
 +++ b/android/ijkplayer/settings.gradle
 @@ -1,7 +1,7 @@
--include ':ijkplayer-armv5', ':ijkplayer-x86_64'
-+//include ':ijkplayer-armv5', ':ijkplayer-x86_64'
+-include  ':ijkplayer-x86_64'
++//include  ':ijkplayer-x86_64'
  include ':ijkplayer-armv7a'
 -include ':ijkplayer-arm64'
 -include ':ijkplayer-x86'

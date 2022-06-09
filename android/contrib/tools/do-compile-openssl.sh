@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2014 Miguel Botón <waninkoko@gmail.com>
 # Copyright (C) 2014 Zhang Rui <bbcallen@gmail.com>
+# Copyright (C) 2022 Hydrogenium2020
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,180 +21,164 @@
 set -e
 
 if [ -z "$ANDROID_NDK" ]; then
-    echo "You must define ANDROID_NDK before starting."
-    echo "They must point to your NDK directories.\n"
+    echo "运行前一定要定义ANDROID_NDK变量，以便让我找到Android NDK位置"
+    echo "这个变量一定要定义了你的Android NDK文件夹位置\n"
     exit 1
 fi
 
 #--------------------
-# common defines
-FF_ARCH=$1
-if [ -z "$FF_ARCH" ]; then
-    echo "You must specific an architecture 'arm, armv7a, x86, ...'.\n"
+# 变量定义
+#构建平台架构
+TARGET_ARCH=$1
+if [ -z "$TARGET_ARCH" ]; then
+    echo "没有指定架构,只能编译以下架构 'armv7a, arm64, x86, ...'.\n"
     exit 1
 fi
+#构建的那个地方的根目录
+TARGET_BUILD_ROOT=`pwd`
 
+#Android SDK API版本
+TARGET_ANDROID_API=19
 
-FF_BUILD_ROOT=`pwd`
-FF_ANDROID_PLATFORM=android-9
+#构建名称
+TARGET_BUILD_NAME=
 
+#源码位置
+TARGET_SOURCE=
 
-FF_BUILD_NAME=
-FF_SOURCE=
-FF_CROSS_PREFIX=
+#构建工具链前缀
+TARGET_CROSS_PREFIX=
 
-FF_CFG_FLAGS=
-FF_PLATFORM_CFG_FLAGS=
+#构建CFLAGS
+TARGET_CFG_FLAGS=
 
-FF_EXTRA_CFLAGS=
-FF_EXTRA_LDFLAGS=
+#构建Android ABI（就是平台架构）
+TARGET_ANDROID_ABI=
+
+#额外的构建CFLAGS/LDFLAGS
+TARGET_EXTRA_CFLAGS=
+TARGET_EXTRA_LDFLAGS=
 
 
 
 #--------------------
 echo ""
 echo "--------------------"
-echo "[*] make NDK standalone toolchain"
+echo "[*] 设置环境变量"
 echo "--------------------"
 . ./tools/do-detect-env.sh
-FF_MAKE_TOOLCHAIN_FLAGS=$IJK_MAKE_TOOLCHAIN_FLAGS
-FF_MAKE_FLAGS=$IJK_MAKE_FLAG
-FF_GCC_VER=$IJK_GCC_VER
-FF_GCC_64_VER=$IJK_GCC_64_VER
+TARGET_MAKE_TOOLCHAIN_FLAGS=$IJK_MAKE_TOOLCHAIN_FLAGS
+TARGET_MAKE_FLAGS="$IJK_MAKE_FLAG"
+TARGET_GCC_VER=$IJK_GCC_VER
+TARGET_GCC_64_VER=$IJK_GCC_64_VER
 
 
-#----- armv7a begin -----
-if [ "$FF_ARCH" = "armv7a" ]; then
-    FF_BUILD_NAME=openssl-armv7a
-    FF_SOURCE=$FF_BUILD_ROOT/$FF_BUILD_NAME
+#如果未指定，从Armv7a开始编译
+if [ "$TARGET_ARCH" = "armv7a" ]; then
+    TARGET_ANDROID_ARCH=arm
+    TARGET_ANDROID_ABI="android-arm"
+    
+    TARGET_BUILD_NAME=openssl-armv7a
+    TARGET_SOURCE=$TARGET_BUILD_ROOT/$TARGET_BUILD_NAME
 	
-    FF_CROSS_PREFIX=arm-linux-androideabi
-	FF_TOOLCHAIN_NAME=${FF_CROSS_PREFIX}-${FF_GCC_VER}
+    TARGET_CROSS_PREFIX=arm-linux-androideabi
+	TARGET_TOOLCHAIN_NAME=${TARGET_CROSS_PREFIX}-${TARGET_GCC_VER}
 
-    FF_PLATFORM_CFG_FLAGS="android-armv7"
 
-elif [ "$FF_ARCH" = "armv5" ]; then
-    FF_BUILD_NAME=openssl-armv5
-    FF_SOURCE=$FF_BUILD_ROOT/$FF_BUILD_NAME
+
+elif [ "$TARGET_ARCH" = "x86" ]; then
+    TARGET_ANDROID_ARCH=x86
+    TARGET_ANDROID_ABI="android-x86"
+
+    TARGET_BUILD_NAME=openssl-x86
+    TARGET_SOURCE=$TARGET_BUILD_ROOT/$TARGET_BUILD_NAME
 	
-    FF_CROSS_PREFIX=arm-linux-androideabi
-	FF_TOOLCHAIN_NAME=${FF_CROSS_PREFIX}-${FF_GCC_VER}
+    TARGET_CROSS_PREFIX=i686-linux-android
+	TARGET_TOOLCHAIN_NAME=x86-${TARGET_GCC_VER}
 
-    FF_PLATFORM_CFG_FLAGS="android"
+    TARGET_CFG_FLAGS="$TARGET_CFG_FLAGS no-asm"
 
-elif [ "$FF_ARCH" = "x86" ]; then
-    FF_BUILD_NAME=openssl-x86
-    FF_SOURCE=$FF_BUILD_ROOT/$FF_BUILD_NAME
-	
-    FF_CROSS_PREFIX=i686-linux-android
-	FF_TOOLCHAIN_NAME=x86-${FF_GCC_VER}
+elif [ "$TARGET_ARCH" = "x86_64" ]; then
+    TARGET_ANDROID_ARCH=x86_64
+    #Android 5.0.0开始支持64位架构，所以指定Api为21
+    TARGET_ANDROID_API=21
+    TARGET_ANDROID_ABI="android-x86_64"
 
-    FF_PLATFORM_CFG_FLAGS="android-x86"
+    TARGET_BUILD_NAME=openssl-x86_64
+    TARGET_SOURCE=$TARGET_BUILD_ROOT/$TARGET_BUILD_NAME
 
-    FF_CFG_FLAGS="$FF_CFG_FLAGS no-asm"
+    TARGET_CROSS_PREFIX=x86_64-linux-android
+    TARGET_TOOLCHAIN_NAME=${TARGET_CROSS_PREFIX}-${TARGET_GCC_64_VER}
 
-elif [ "$FF_ARCH" = "x86_64" ]; then
-    FF_ANDROID_PLATFORM=android-21
+elif [ "$TARGET_ARCH" = "arm64" ]; then
+    TARGET_ANDROID_ARCH=arm64
+    #Android 5.0.0开始支持64位架构，所以指定Api为21
+    TARGET_ANDROID_API=21
+    TARGET_ANDROID_ABI="android-arm64"
 
-    FF_BUILD_NAME=openssl-x86_64
-    FF_SOURCE=$FF_BUILD_ROOT/$FF_BUILD_NAME
+    TARGET_BUILD_NAME=openssl-arm64
+    TARGET_SOURCE=$TARGET_BUILD_ROOT/$TARGET_BUILD_NAME
 
-    FF_CROSS_PREFIX=x86_64-linux-android
-    FF_TOOLCHAIN_NAME=${FF_CROSS_PREFIX}-${FF_GCC_64_VER}
-
-    FF_PLATFORM_CFG_FLAGS="linux-x86_64"
-
-elif [ "$FF_ARCH" = "arm64" ]; then
-    FF_ANDROID_PLATFORM=android-21
-
-    FF_BUILD_NAME=openssl-arm64
-    FF_SOURCE=$FF_BUILD_ROOT/$FF_BUILD_NAME
-
-    FF_CROSS_PREFIX=aarch64-linux-android
-    FF_TOOLCHAIN_NAME=${FF_CROSS_PREFIX}-${FF_GCC_64_VER}
-
-    FF_PLATFORM_CFG_FLAGS="linux-aarch64"
+    TARGET_CROSS_PREFIX=aarch64-linux-android
+    TARGET_TOOLCHAIN_NAME=${TARGET_CROSS_PREFIX}-${TARGET_GCC_64_VER}
 
 else
-    echo "unknown architecture $FF_ARCH";
+    echo "不支持的架构 $TARGET_ARCH !";
     exit 1
 fi
 
-FF_TOOLCHAIN_PATH=$FF_BUILD_ROOT/build/$FF_BUILD_NAME/toolchain
-
-FF_SYSROOT=$FF_TOOLCHAIN_PATH/sysroot
-FF_PREFIX=$FF_BUILD_ROOT/build/$FF_BUILD_NAME/output
-
-mkdir -p $FF_PREFIX
-# mkdir -p $FF_SYSROOT
-
-
-#--------------------
-echo ""
-echo "--------------------"
-echo "[*] make NDK standalone toolchain"
-echo "--------------------"
-. ./tools/do-detect-env.sh
-FF_MAKE_TOOLCHAIN_FLAGS=$IJK_MAKE_TOOLCHAIN_FLAGS
-FF_MAKE_FLAGS=$IJK_MAKE_FLAG
-
-
-FF_MAKE_TOOLCHAIN_FLAGS="$FF_MAKE_TOOLCHAIN_FLAGS --install-dir=$FF_TOOLCHAIN_PATH"
-FF_TOOLCHAIN_TOUCH="$FF_TOOLCHAIN_PATH/touch"
-if [ ! -f "$FF_TOOLCHAIN_TOUCH" ]; then
-    $ANDROID_NDK/build/tools/make-standalone-toolchain.sh \
-        $FF_MAKE_TOOLCHAIN_FLAGS \
-        --platform=$FF_ANDROID_PLATFORM \
-        --toolchain=$FF_TOOLCHAIN_NAME
-    touch $FF_TOOLCHAIN_TOUCH;
-fi
+#工具链位置
+TARGET_TOOLCHAIN_PATH=$ANDROID_NDK/toolchain/$TARGET_TOOLCHAIN_NAME/prebuilt/linux-x86_64
+echo "-> 使用位于 $TARGET_TOOLCHAIN_PATH  的工具链"
+#构建输出文件夹(就是生成库的位置)
+TARGET_PREFIX="$TARGET_BUILD_ROOT/build/$TARGET_BUILD_NAME/output"
+echo "-> 生成的文件在 $TARGET_PREFIX"
+#创建构建输出文件夹
+mkdir -p $TARGET_PREFIX
 
 
 #--------------------
 echo ""
 echo "--------------------"
-echo "[*] check openssl env"
+echo "[*] 配置openssl"
 echo "--------------------"
-export PATH=$FF_TOOLCHAIN_PATH/bin:$PATH
+export PATH=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+export PATH=$TARGET_TOOLCHAIN_PATH/bin:$PATH
+echo $PATH
+export COMMON_TARGET_CFG_FLAGS=
 
-export COMMON_FF_CFG_FLAGS=
-
-FF_CFG_FLAGS="$FF_CFG_FLAGS $COMMON_FF_CFG_FLAGS"
+TARGET_CFG_FLAGS="$TARGET_CFG_FLAGS $COMMON_TARGET_CFG_FLAGS"
 
 #--------------------
-# Standard options:
-FF_CFG_FLAGS="$FF_CFG_FLAGS zlib-dynamic"
-FF_CFG_FLAGS="$FF_CFG_FLAGS no-shared"
-FF_CFG_FLAGS="$FF_CFG_FLAGS --openssldir=$FF_PREFIX"
-FF_CFG_FLAGS="$FF_CFG_FLAGS --cross-compile-prefix=${FF_CROSS_PREFIX}-"
-FF_CFG_FLAGS="$FF_CFG_FLAGS $FF_PLATFORM_CFG_FLAGS"
-
+# 构建选项:
+TARGET_CFG_FLAGS="$TARGET_CFG_FLAGS zlib-dynamic"
+#指定API
+TARGET_CFG_FLAGS="$TARGET_CFG_FLAGS -D__ANDROID_API__=$TARGET_ANDROID_API"
+#不构建共享库
+TARGET_CFG_FLAGS="$TARGET_CFG_FLAGS no-shared"
+#构建文件夹
+TARGET_CFG_FLAGS="$TARGET_CFG_FLAGS --prefix=$TARGET_PREFIX"
+#指定ABI
+TARGET_CFG_FLAGS="$TARGET_CFG_FLAGS $TARGET_ANDROID_ABI"
 #--------------------
-echo ""
-echo "--------------------"
-echo "[*] configurate openssl"
-echo "--------------------"
-cd $FF_SOURCE
+cd $TARGET_SOURCE
 #if [ -f "./Makefile" ]; then
 #    echo 'reuse configure'
 #else
-    echo "./Configure $FF_CFG_FLAGS"
-    ./Configure $FF_CFG_FLAGS
-#        --extra-cflags="$FF_CFLAGS $FF_EXTRA_CFLAGS" \
-#        --extra-ldflags="$FF_EXTRA_LDFLAGS"
+
+    echo "./Configure $TARGET_CFG_FLAGS"
+    ./Configure $TARGET_CFG_FLAGS 
+#        --extra-cflags="$TARGET_CFLAGS $TARGET_EXTRA_CFLAGS" \
+#        --extra-ldflags="$TARGET_EXTRA_LDFLAGS"
 #fi
 
 #--------------------
 echo ""
 echo "--------------------"
-echo "[*] compile openssl"
+echo "[*] 编译 openssl"
 echo "--------------------"
 make depend
-make $FF_MAKE_FLAGS
-make install_sw
+make $TARGET_MAKE_FLAGS
+make install
 
-#--------------------
-echo ""
-echo "--------------------"
-echo "[*] link openssl"
-echo "--------------------"
+

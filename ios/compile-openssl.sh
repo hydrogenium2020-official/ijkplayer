@@ -19,34 +19,34 @@
 #----------
 # modify for your build tool
 
-FF_ALL_ARCHS_IOS6_SDK="armv7 armv7s i386"
-FF_ALL_ARCHS_IOS7_SDK="armv7 armv7s arm64 i386 x86_64"
-FF_ALL_ARCHS_IOS8_SDK="armv7 arm64 i386 x86_64"
+TARGET_ALL_ARCHS_IOS6_SDK="armv7 armv7s i386"
+TARGET_ALL_ARCHS_IOS7_SDK="armv7 armv7s arm64 i386 x86_64"
+TARGET_ALL_ARCHS_IOS8_SDK="armv7 arm64 i386 x86_64"
 
-FF_ALL_ARCHS=$FF_ALL_ARCHS_IOS8_SDK
+TARGET_ALL_ARCHS=$TARGET_ALL_ARCHS_IOS8_SDK
 
 #----------
 UNI_BUILD_ROOT=`pwd`
 UNI_TMP="$UNI_BUILD_ROOT/tmp"
 UNI_TMP_LLVM_VER_FILE="$UNI_TMP/llvm.ver.txt"
-FF_TARGET=$1
+TARGET_TARGET=$1
 set -e
 
 #----------
-FF_LIBS="libssl libcrypto"
+TARGET_LIBS="libssl libcrypto"
 
 #----------
 echo_archs() {
     echo "===================="
     echo "[*] check xcode version"
     echo "===================="
-    echo "FF_ALL_ARCHS = $FF_ALL_ARCHS"
+    echo "TARGET_ALL_ARCHS = $TARGET_ALL_ARCHS"
 }
 
 do_lipo () {
     LIB_FILE=$1
     LIPO_FLAGS=
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
         LIPO_FLAGS="$LIPO_FLAGS $UNI_BUILD_ROOT/build/openssl-$ARCH/output/lib/$LIB_FILE"
     done
@@ -57,38 +57,38 @@ do_lipo () {
 
 do_lipo_all () {
     mkdir -p $UNI_BUILD_ROOT/build/universal/lib
-    echo "lipo archs: $FF_ALL_ARCHS"
-    for FF_LIB in $FF_LIBS
+    echo "lipo archs: $TARGET_ALL_ARCHS"
+    for TARGET_LIB in $TARGET_LIBS
     do
-        do_lipo "$FF_LIB.a";
+        do_lipo "$TARGET_LIB.a";
     done
 
     cp -R $UNI_BUILD_ROOT/build/openssl-armv7/output/include $UNI_BUILD_ROOT/build/universal/
 }
 
 #----------
-if [ "$FF_TARGET" = "armv7" -o "$FF_TARGET" = "armv7s" -o "$FF_TARGET" = "arm64" ]; then
+if [ "$TARGET_TARGET" = "armv7" -o "$TARGET_TARGET" = "armv7s" -o "$TARGET_TARGET" = "arm64" ]; then
     echo_archs
-    sh tools/do-compile-openssl.sh $FF_TARGET
-elif [ "$FF_TARGET" = "i386" -o "$FF_TARGET" = "x86_64" ]; then
+    sh tools/do-compile-openssl.sh $TARGET_TARGET
+elif [ "$TARGET_TARGET" = "i386" -o "$TARGET_TARGET" = "x86_64" ]; then
     echo_archs
-    sh tools/do-compile-openssl.sh $FF_TARGET
-elif [ "$FF_TARGET" = "lipo" ]; then
+    sh tools/do-compile-openssl.sh $TARGET_TARGET
+elif [ "$TARGET_TARGET" = "lipo" ]; then
     echo_archs
     do_lipo_all
-elif [ "$FF_TARGET" = "all" ]; then
+elif [ "$TARGET_TARGET" = "all" ]; then
     echo_archs
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
         sh tools/do-compile-openssl.sh $ARCH
     done
 
     do_lipo_all
-elif [ "$FF_TARGET" = "check" ]; then
+elif [ "$TARGET_TARGET" = "check" ]; then
     echo_archs
-elif [ "$FF_TARGET" = "clean" ]; then
+elif [ "$TARGET_TARGET" = "clean" ]; then
     echo_archs
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
         cd openssl-$ARCH && git clean -xdf && cd -
     done

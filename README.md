@@ -25,7 +25,6 @@ dependencies {
     compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
 
     # Other ABIs: optional
-    compile 'tv.danmaku.ijk.media:ijkplayer-armv5:0.8.8'
     compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.8.8'
     compile 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.8'
     compile 'tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8'

@@ -19,18 +19,18 @@
 #----------
 # modify for your build tool
 
-FF_ALL_ARCHS_IOS6_SDK="armv7 armv7s i386"
-FF_ALL_ARCHS_IOS7_SDK="armv7 armv7s arm64 i386 x86_64"
-FF_ALL_ARCHS_IOS8_SDK="armv7 arm64 i386 x86_64"
+TARGET_ALL_ARCHS_IOS6_SDK="armv7 armv7s i386"
+TARGET_ALL_ARCHS_IOS7_SDK="armv7 armv7s arm64 i386 x86_64"
+TARGET_ALL_ARCHS_IOS8_SDK="armv7 arm64 i386 x86_64"
 
-FF_ALL_ARCHS=$FF_ALL_ARCHS_IOS8_SDK
+TARGET_ALL_ARCHS=$TARGET_ALL_ARCHS_IOS8_SDK
 
 #----------
 UNI_BUILD_ROOT=`pwd`
 UNI_TMP="$UNI_BUILD_ROOT/tmp"
 UNI_TMP_LLVM_VER_FILE="$UNI_TMP/llvm.ver.txt"
-FF_TARGET=$1
-FF_TARGET_EXTRA=$2
+TARGET_TARGET=$1
+TARGET_TARGET_EXTRA=$2
 set -e
 
 #----------
@@ -38,14 +38,14 @@ echo_archs() {
     echo "===================="
     echo "[*] check xcode version"
     echo "===================="
-    echo "FF_ALL_ARCHS = $FF_ALL_ARCHS"
+    echo "TARGET_ALL_ARCHS = $TARGET_ALL_ARCHS"
 }
 
-FF_LIBS="libavcodec libavfilter libavformat libavutil libswscale libswresample"
+TARGET_LIBS="libavcodec libavfilter libavformat libavutil libswscale libswresample"
 do_lipo_ffmpeg () {
     LIB_FILE=$1
     LIPO_FLAGS=
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
         ARCH_LIB_FILE="$UNI_BUILD_ROOT/build/ffmpeg-$ARCH/output/lib/$LIB_FILE"
         if [ -f "$ARCH_LIB_FILE" ]; then
@@ -63,7 +63,7 @@ SSL_LIBS="libcrypto libssl"
 do_lipo_ssl () {
     LIB_FILE=$1
     LIPO_FLAGS=
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
         ARCH_LIB_FILE="$UNI_BUILD_ROOT/build/openssl-$ARCH/output/lib/$LIB_FILE"
         if [ -f "$ARCH_LIB_FILE" ]; then
@@ -81,14 +81,14 @@ do_lipo_ssl () {
 
 do_lipo_all () {
     mkdir -p $UNI_BUILD_ROOT/build/universal/lib
-    echo "lipo archs: $FF_ALL_ARCHS"
-    for FF_LIB in $FF_LIBS
+    echo "lipo archs: $TARGET_ALL_ARCHS"
+    for TARGET_LIB in $TARGET_LIBS
     do
-        do_lipo_ffmpeg "$FF_LIB.a";
+        do_lipo_ffmpeg "$TARGET_LIB.a";
     done
 
     ANY_ARCH=
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
         ARCH_INC_DIR="$UNI_BUILD_ROOT/build/ffmpeg-$ARCH/output/include"
         if [ -d "$ARCH_INC_DIR" ]; then
@@ -117,31 +117,31 @@ do_lipo_all () {
 }
 
 #----------
-if [ "$FF_TARGET" = "armv7" -o "$FF_TARGET" = "armv7s" -o "$FF_TARGET" = "arm64" ]; then
+if [ "$TARGET_TARGET" = "armv7" -o "$TARGET_TARGET" = "armv7s" -o "$TARGET_TARGET" = "arm64" ]; then
     echo_archs
-    sh tools/do-compile-ffmpeg.sh $FF_TARGET $FF_TARGET_EXTRA
+    sh tools/do-compile-ffmpeg.sh $TARGET_TARGET $TARGET_TARGET_EXTRA
     do_lipo_all
-elif [ "$FF_TARGET" = "i386" -o "$FF_TARGET" = "x86_64" ]; then
+elif [ "$TARGET_TARGET" = "i386" -o "$TARGET_TARGET" = "x86_64" ]; then
     echo_archs
-    sh tools/do-compile-ffmpeg.sh $FF_TARGET $FF_TARGET_EXTRA
+    sh tools/do-compile-ffmpeg.sh $TARGET_TARGET $TARGET_TARGET_EXTRA
     do_lipo_all
-elif [ "$FF_TARGET" = "lipo" ]; then
+elif [ "$TARGET_TARGET" = "lipo" ]; then
     echo_archs
     do_lipo_all
-elif [ "$FF_TARGET" = "all" ]; then
+elif [ "$TARGET_TARGET" = "all" ]; then
     echo_archs
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
-        sh tools/do-compile-ffmpeg.sh $ARCH $FF_TARGET_EXTRA
+        sh tools/do-compile-ffmpeg.sh $ARCH $TARGET_TARGET_EXTRA
     done
 
     do_lipo_all
-elif [ "$FF_TARGET" = "check" ]; then
+elif [ "$TARGET_TARGET" = "check" ]; then
     echo_archs
-elif [ "$FF_TARGET" = "clean" ]; then
+elif [ "$TARGET_TARGET" = "clean" ]; then
     echo_archs
     echo "=================="
-    for ARCH in $FF_ALL_ARCHS
+    for ARCH in $TARGET_ALL_ARCHS
     do
         echo "clean ffmpeg-$ARCH"
         echo "=================="

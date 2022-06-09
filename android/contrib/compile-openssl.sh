@@ -17,26 +17,26 @@
 
 #----------
 UNI_BUILD_ROOT=`pwd`
-FF_TARGET=$1
+TARGET_TARGET=$1
 set -e
 set +x
 
-FF_ACT_ARCHS_32="armv5 armv7a x86"
-FF_ACT_ARCHS_64="armv5 armv7a arm64 x86 x86_64"
-FF_ACT_ARCHS_ALL=$FF_ACT_ARCHS_64
+TARGET_ACT_ARCHS_32="armv7a x86"
+TARGET_ACT_ARCHS_64="armv7a arm64 x86 x86_64"
+TARGET_ACT_ARCHS_ALL=$TARGET_ACT_ARCHS_64
 
 echo_archs() {
     echo "===================="
     echo "[*] check archs"
     echo "===================="
-    echo "FF_ALL_ARCHS = $FF_ACT_ARCHS_ALL"
-    echo "FF_ACT_ARCHS = $*"
+    echo "TARGET_ALL_ARCHS = $TARGET_ACT_ARCHS_ALL"
+    echo "TARGET_ACT_ARCHS = $*"
     echo ""
 }
 
 echo_usage() {
     echo "Usage:"
-    echo "  compile-openssl.sh armv5|armv7a|arm64|x86|x86_64"
+    echo "  compile-openssl.sh armv7a|arm64|x86|x86_64"
     echo "  compile-openssl.sh all|all32"
     echo "  compile-openssl.sh all64"
     echo "  compile-openssl.sh clean"
@@ -57,35 +57,35 @@ echo_nextstep_help() {
 }
 
 #----------
-case "$FF_TARGET" in
+case "$TARGET_TARGET" in
     "")
         echo_archs armv7a
         sh tools/do-compile-openssl.sh armv7a
     ;;
-    armv5|armv7a|arm64|x86|x86_64)
-        echo_archs $FF_TARGET
-        sh tools/do-compile-openssl.sh $FF_TARGET
+    armv7a|arm64|x86|x86_64)
+        echo_archs $TARGET_TARGET
+        sh tools/do-compile-openssl.sh $TARGET_TARGET
         echo_nextstep_help
     ;;
     all32)
-        echo_archs $FF_ACT_ARCHS_32
-        for ARCH in $FF_ACT_ARCHS_32
+        echo_archs $TARGET_ACT_ARCHS_32
+        for ARCH in $TARGET_ACT_ARCHS_32
         do
             sh tools/do-compile-openssl.sh $ARCH
         done
         echo_nextstep_help
     ;;
     all|all64)
-        echo_archs $FF_ACT_ARCHS_64
-        for ARCH in $FF_ACT_ARCHS_64
+        echo_archs $TARGET_ACT_ARCHS_64
+        for ARCH in $TARGET_ACT_ARCHS_64
         do
             sh tools/do-compile-openssl.sh $ARCH
         done
         echo_nextstep_help
     ;;
     clean)
-        echo_archs FF_ACT_ARCHS_64
-        for ARCH in $FF_ACT_ARCHS_ALL
+        echo_archs TARGET_ACT_ARCHS_64
+        for ARCH in $TARGET_ACT_ARCHS_ALL
         do
             if [ -d openssl-$ARCH ]; then
                 cd openssl-$ARCH && git clean -xdf && cd -
@@ -94,7 +94,7 @@ case "$FF_TARGET" in
         rm -rf ./build/openssl-*
     ;;
     check)
-        echo_archs FF_ACT_ARCHS_ALL
+        echo_archs TARGET_ACT_ARCHS_ALL
     ;;
     *)
         echo_usage

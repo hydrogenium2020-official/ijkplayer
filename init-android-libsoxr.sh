@@ -54,7 +54,6 @@ function pull_android_toolchain_cmake()
 
 pull_android_toolchain_cmake
 
-pull_fork "armv5"
 pull_fork "armv7a"
 pull_fork "arm64"
 pull_fork "x86"

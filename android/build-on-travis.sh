@@ -26,8 +26,8 @@ fi
 
 
 REQUEST_TARGET=$1
-ACT_ABI_32="armv5 armv7a x86"
-ACT_ABI_64="armv5 armv7a arm64 x86 x86_64"
+ACT_ABI_32="armv7a x86"
+ACT_ABI_64="armv7a arm64 x86 x86_64"
 ACT_ABI_ALL=$ACT_ABI_64
 
 
@@ -74,7 +74,7 @@ do_build_exo() {
 }
 
 case "$REQUEST_TARGET" in
-    armv5|armv7a|arm64|x86|x86_64)
+    armv7a|arm64|x86|x86_64)
         do_build_native $REQUEST_TARGET
     ;;
     java)
@@ -101,7 +101,7 @@ case "$REQUEST_TARGET" in
     ;;
     *)
         echo "Usage:"
-        echo "  build-on-travis.sh armv5|armv7a|arm64|x86|x86_64"
+        echo "  build-on-travis.sh armv7a|arm64|x86|x86_64"
         echo "  build-on-travis.sh java"
         echo "  build-on-travis.sh exo"
         echo "  build-on-travis.sh all|all32"
