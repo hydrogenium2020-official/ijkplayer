@@ -79,6 +79,18 @@ export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-decoder=flac"
 export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-decoder=hevc"
 export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-decoder=vp8"
 export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-decoder=vp9"
+#开启AV1解码
+export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-libaom"
+#开启h.264/h.265
+export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-libx265"
+export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-libx264"
+#支持DASH播放
+export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --enable-demuxer=dash"
+#支持opus音频格式播放
+export COMMON_TARGET_CFG_FLAGS="$COMMON_FF_CFG_FLAGS --enable-decoder=opus"
+export COMMON_TARGET_CFG_FLAGS="$COMMON_FF_CFG_FLAGS --enable-decoder=opus"
+#支持xml
+export COMMON_TARGET_CFG_FLAGS="$COMMON_FF_CFG_FLAGS --enable-libxml2"
 
 export COMMON_TARGET_CFG_FLAGS="$COMMON_TARGET_CFG_FLAGS --disable-hwaccels"
 

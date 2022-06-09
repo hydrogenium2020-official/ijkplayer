@@ -60,7 +60,7 @@ case "$IJK_NDK_REL" in
                 ;;
             esac
         else
-            echo "You need the NDKr10e or later"
+            echo "你需要使用NDK19或者更新的版本"
             exit 1
         fi
     ;;
@@ -73,15 +73,16 @@ case "$IJK_NDK_REL" in
                 then
                     echo "NDKr$IJK_NDK_REL detected"
                 else
-                    echo "You need the NDKr10e or later"
+                    echo "你需要使用NDK19或者更新的版本"
                     exit 1
                 fi
             ;;
             *)
-                echo "You need the NDKr10e or later"
+                echo "你需要使用NDK19或者更新的版本"
                 exit 1
             ;;
         esac
+        
     ;;
 esac
 

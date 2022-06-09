@@ -17,9 +17,9 @@
 #
 
 
-IJK_LIBYUV_UPSTREAM=https://github.com/Bilibili/libyuv.git
-IJK_LIBYUV_FORK=https://github.com/Bilibili/libyuv.git
-IJK_LIBYUV_COMMIT=ijk-r0.2.1-dev
+IJK_LIBYUV_UPSTREAM=https://github.com/noiseless/libyuv.git
+IJK_LIBYUV_FORK=https://github.com/noiseless/libyuv.git
+IJK_LIBYUV_COMMIT=main
 IJK_LIBYUV_LOCAL_REPO=extra/libyuv
 
 set -e
