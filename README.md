@@ -1,7 +1,7 @@
 # 项目介绍
 https://github.com/bilibili/ijkplayer 的fork,有所改动
 - 升级openssl 至`1.1.1o`,提升安全性，原有的有安全漏洞风险,切换到官方上游
-- 默认开启x264,x265，启用dash,opus支持,启用libxml2
+- 默认开启x264,x265，启用dash(还是用不了?),opus支持,启用libxml2
 - `x86_64`（目标平台）因为编译错误原因默认关闭`汇编加速`
 - 支持Android NDK `r21`(其他版本需要有llvm和gcc 4.9共存的版本)
 - 暂不支持ios(因为我没设备测试)
