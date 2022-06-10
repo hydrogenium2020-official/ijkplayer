@@ -57,3 +57,11 @@ https://github.com/bilibili/ijkplayer 的fork,有所改动
     sh compile-ijk.sh all
 
 然后去当前目录的`ijkplayer\ijkplayer-平台架构\src\main\libs`里面的文件夹里面找so,拿到项目里面替换就好
+
+### License
+
+```
+Copyright (c) 2017 Bilibili
+Copyright (c) 2022 Hydrogenium2020
+Licensed under LGPLv2.1 or later
+```
